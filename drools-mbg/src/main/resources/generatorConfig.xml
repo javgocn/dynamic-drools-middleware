@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <!-- 引入配置文件 -->
+    <properties resource="generator.properties"/>
+
+    <!-- 配置上下文环境 -->
+    <context id="MySqlContext" targetRuntime="MyBatis3" defaultModelType="flat">
+        <!-- 配置 SQL 语句中的前置分隔符 -->
+        <property name="beginningDelimiter" value="`"/>
+        <!-- 配置 SQL 语句中的后置分隔符 -->
+        <property name="endingDelimiter" value="`"/>
+        <!-- 配置生成 Java 文件的编码 -->
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <!-- 为实体类生成序列化方法 -->
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+        <!-- 为生成的 Java 实体类创建一个 toString 方法 -->
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+        <!-- 生成 mapper.xml 时覆盖原文件 -->
+        <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin" />
+        <!-- 扩展 CommentGenerator：为实体类添加 Swagger 注解（修改点1：需要将 type 改为实际的类全路径名） -->
+        <commentGenerator type="cn.javgo.drools.CommentGenerator">
+            <!-- 是否阻止生成的注释 -->
+            <property name="suppressAllComments" value="true"/>
+            <!-- 是否阻止生成的注释包含时间戳 -->
+            <property name="suppressDate" value="true"/>
+            <!-- 是否添加数据库表的备注信息 -->
+            <property name="addRemarkComments" value="true"/>
+        </commentGenerator>
+        <!-- 配置MBG要连接的数据库信息 -->
+        <jdbcConnection driverClass="${jdbc.driverClass}"
+                        connectionURL="${jdbc.connectionURL}"
+                        userId="${jdbc.userId}"
+                        password="${jdbc.password}">
+            <!-- 解决mysql驱动升级到8.0后不生成指定数据库代码的问题 -->
+            <property name="nullCatalogMeansCurrent" value="true" />
+        </jdbcConnection>
+        <!-- 用于控制实体类的生成（修改点2：需要将 targetPackage 换为实体类所在包名） -->
+        <javaModelGenerator targetPackage="cn.javgo.drools.model" targetProject="drools-mbg/src/main/java"/>
+        <!-- 用于控制 Mapper.xml 文件的生成（修改点3：targetPackage 修改为想要生成的路径） -->
+        <sqlMapGenerator targetPackage="cn.javgo.drools.mapper" targetProject="drools-mbg/src/main/resources"/>
+        <!-- 用于控制 Mapper 接口的生成（修改点4：targetPackage 修改为想要生成的路径） -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="cn.javgo.drools.mapper"
+                             targetProject="drools-mbg/src/main/java"/>
+        <!-- 配置需要生成的表，生成全部表tableName设为% -->
+        <table tableName="%">
+            <!-- 用来指定主键生成策略 -->
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+    </context>
+</generatorConfiguration>

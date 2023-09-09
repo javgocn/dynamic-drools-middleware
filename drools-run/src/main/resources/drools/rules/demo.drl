@@ -1,0 +1,20 @@
+package com.drools.rule;
+
+import cn.javgo.drools.dto.fact.RuleExecutionObject;
+import cn.javgo.drools.dto.fact.RuleExecutionResult;
+import cn.javgo.drools.dto.fact.DynamicEntity // 动态实体类
+import java.util.HashMap;
+
+global RuleExecutionResult _result;
+
+rule "test-1"
+
+    salience 1
+    no-loop true
+
+    when
+        $dynamicEntity : DynamicEntity(attributeMap["name"] == "张三")
+    then
+        System.out.println("test-1 触发");
+        _result.setResult("status", "success");
+end

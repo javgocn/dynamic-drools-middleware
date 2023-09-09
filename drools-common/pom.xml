@@ -1,0 +1,73 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>cn.javgo</groupId>
+        <artifactId>dynamic-drools-middleware</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>cn.javgo</groupId>
+    <artifactId>drools-common</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>drools-common</name>
+    <url>http://maven.apache.org</url>
+
+    <dependencies>
+        <!-- 封装统一分页结果 -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+        </dependency>
+
+        <!-- 处理 Springfox 与高本本 Spring Boot 版本不兼容的问题时需要用到 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- 封装 Redis 基础操作 API 和基础配置类时需要用到 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- Spring Data 提供的工具类 -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
+
+        <!-- AOP 处理日志时需要用到 -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+
+        <!-- 提供项目的 API 文档时需要用到 -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+        </dependency>
+
+        <!-- 处理项目的参数校验失败异常时需要用到 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Apache Commons Lang 依赖
+                这是 Apache Commons Lang 3 提供的一个工具包，提供了一些常用的工具类，例如：StringUtils、RandomStringUtils、
+                ArrayUtils、DateUtils 等等。它和下面的 Hutool 工具包类似，但是 Hutool 工具包提供的工具类更多，而且更好用。在
+                项目中我们主要使用 Hutool 工具包，但是 Apache Commons Lang 3 也是一个不错的选择。
+            -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+    </dependencies>
+</project>

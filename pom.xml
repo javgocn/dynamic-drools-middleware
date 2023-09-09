@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <!--<version>2.2.5.RELEASE</version>-->
+        <version>2.7.5</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>cn.javgo</groupId>
+    <artifactId>dynamic-drools-middleware</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <name>dynamic-drools-middleware</name>
+    <description>dynamic-drools-middleware</description>
+
+    <modules>
+        <!-- 通用模块 -->
+        <module>drools-common</module>
+        <!-- 管理态 -->
+        <module>drools-admin</module>
+        <!-- 运行态 -->
+        <module>drools-run</module>
+        <!-- 数据模块 -->
+        <module>drools-mbg</module>
+        <!-- 安全模块 -->
+        <module>drools-security</module>
+        <!-- 示例模块 -->
+        <module>drools-demo</module>
+    </modules>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- Maven plugins -->
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.2.0</maven-source-plugin.version>
+        <!-- Alibaba Druid -->
+        <alibaba.druid.version>1.2.14</alibaba.druid.version>
+        <!-- Alibaba FastJson -->
+        <alibaba.fastjson.version>1.2.47</alibaba.fastjson.version>
+        <!-- Drools 规则引擎 -->
+        <drools.version>7.0.0.Final</drools.version>
+        <!-- MySQL -->
+        <mysql-connector.version>8.0.29</mysql-connector.version>
+        <!-- PageHelper -->
+        <mybatis.pagehelper.version>1.2.3</mybatis.pagehelper.version>
+        <pagehelper.version>5.3.2</pagehelper.version>
+        <!-- MyBatis -->
+        <mybatis.version>3.5.10</mybatis.version>
+        <!-- MyBatis Spring -->
+        <mybatis-spring-boot.version>2.3.1</mybatis-spring-boot.version>
+        <!-- MyBatis Generator -->
+        <mybatis-generator.version>1.4.1</mybatis-generator.version>
+        <!-- Goggle Guava -->
+        <guava.version>1.0.7</guava.version>
+        <!-- Swagger -->
+        <springfox-swagger.version>3.0.0</springfox-swagger.version>
+        <swagger-models.version>1.6.0</swagger-models.version>
+        <swagger-annotations.version>1.6.0</swagger-annotations.version>
+        <!-- Apache Commons -->
+        <commons-lang3.version>3.1</commons-lang3.version>
+        <!-- Hutool -->
+        <hutool.version>5.4.3</hutool.version>
+        <!-- Feign -->
+        <feign.version>9.5.0</feign.version>
+        <!-- JJWT -->
+        <jjwt.version>0.9.1</jjwt.version>
+        <!-- Logstash -->
+        <logstash-logback.version>7.2</logstash-logback.version>
+        <!-- jaxb-api -->
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+        <!-- 子模块版本 -->
+        <drools-common.version>1.0-SNAPSHOT</drools-common.version>
+        <drools-admin.version>1.0-SNAPSHOT</drools-admin.version>
+        <drools-run.version>1.0-SNAPSHOT</drools-run.version>
+        <drools-mbg.version>1.0-SNAPSHOT</drools-mbg.version>
+        <drools-security.version>1.0-SNAPSHOT</drools-security.version>
+    </properties>
+
+    <!-- 私服仓库 -->
+    <distributionManagement>
+        <repository>
+            <id>maven-releases</id>
+            <name>Nexus Release Repository</name>
+            <url>http://t420.lli.com:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-snapshots</id>
+            <name>Nexus Snapshot Repository</name>
+            <url>http://t420.lli.com:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- ############################# 系统子模块 ############################# -->
+
+            <!-- drools-common 模块 -->
+            <dependency>
+                <groupId>cn.javgo</groupId>
+                <artifactId>drools-common</artifactId>
+                <version>${drools-common.version}</version>
+            </dependency>
+
+            <!-- drools-admin 模块 -->
+            <dependency>
+                <groupId>cn.javgo</groupId>
+                <artifactId>drools-admin</artifactId>
+                <version>${drools-admin.version}</version>
+            </dependency>
+
+            <!-- drools-run 模块 -->
+            <dependency>
+                <groupId>cn.javgo</groupId>
+                <artifactId>drools-run</artifactId>
+                <version>${drools-run.version}</version>
+            </dependency>
+
+            <!-- drools-mbg 模块 -->
+            <dependency>
+                <groupId>cn.javgo</groupId>
+                <artifactId>drools-mbg</artifactId>
+                <version>${drools-mbg.version}</version>
+            </dependency>
+
+            <!-- drools-security 模块 -->
+            <dependency>
+                <groupId>cn.javgo</groupId>
+                <artifactId>drools-security</artifactId>
+                <version>${drools-security.version}</version>
+            </dependency>
+
+            <!-- ############################# API 文档相关依赖 ############################# -->
+
+            <!-- Swagger 依赖 -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${springfox-swagger.version}</version>
+            </dependency>
+
+            <!-- 解决 Swagger 访问主页时的 NumberFormatException 问题 -->
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-models</artifactId>
+                <version>${swagger-models.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger-annotations.version}</version>
+            </dependency>
+
+            <!-- ############################# 数据访问相关依赖 ############################# -->
+
+            <!-- MyBatis 依赖 -->
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis-spring-boot.version}</version>
+            </dependency>
+
+            <!-- MyBatis -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+
+            <!-- MyBatis Generator 依赖 -->
+            <dependency>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-core</artifactId>
+                <version>${mybatis-generator.version}</version>
+            </dependency>
+
+            <!-- MyBatis 分页插件 starter -->
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${mybatis.pagehelper.version}</version>
+            </dependency>
+
+            <!-- MyBatis 分页插件 -->
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>${pagehelper.version}</version>
+            </dependency>
+
+            <!-- Mysql 数据库驱动 -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector.version}</version>
+            </dependency>
+
+            <!-- Alibaba Druid 依赖 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${alibaba.druid.version}</version>
+            </dependency>
+
+            <!-- ############################# Web 安全相关依赖 ############################# -->
+
+            <!-- JWT(Json Web Token) 登录支持 -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <!-- ############################# 日志相关依赖 ############################# -->
+
+            <!-- 集成 logstash 收集日志 -->
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${logstash-logback.version}</version>
+            </dependency>
+
+            <!-- ############################# 工具包相关依赖 ############################# -->
+
+            <!-- Apache Commons Lang 依赖
+                这是 Apache Commons Lang 3 提供的一个工具包，提供了一些常用的工具类，例如：StringUtils、RandomStringUtils、
+                ArrayUtils、DateUtils 等等。它和下面的 Hutool 工具包类似，但是 Hutool 工具包提供的工具类更多，而且更好用。在
+                项目中我们主要使用 Hutool 工具包，但是 Apache Commons Lang 3 也是一个不错的选择。
+            -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <!-- ############################# 服务调用相关依赖 ############################# -->
+
+            <!-- Feign 依赖 -->
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-core</artifactId>
+                <version>${feign.version}</version>
+            </dependency>
+
+            <!-- HttpClient 依赖
+                这是 Apache HttpComponents 提供的一个工具包，提供了一些常用的工具类，例如：HttpClient、HttpEntity、
+                HttpResponse 等等。在项目中我们主要使用 Feign 来调用远程接口，但是 Apache HttpComponents 也是一个不错的选择。
+                在编写规则引擎回调下游业务服务重试策略时，我们使用了 Apache HttpComponents 的如下组件：
+                1、HttpClientBuilder：用于构建 HttpClient 对象。
+                2、CloseableHttpResponse：用于接收 HttpClient 调用远程接口的响应结果。
+                3、HttpRequestBase：用于构建 HttpClient 调用远程接口的请求参数。
+                4、EntityUtils：用于将 HttpClient 调用远程接口的响应结果转换为字符串。
+            -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+
+            <!-- Google Guava 依赖 -->
+            <!--<dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>30.1.1-jre</version>
+            </dependency>-->
+
+            <!-- Guava-retrying 依赖
+                这是 Google Guava 的一个扩展，提供了重试机制，我们在项目中的规则引擎回调下游业务服务时，经常会遇到网络超时、数据库连接超时
+                等问题。这时候我们可以使用 Guava-retrying 来实现重试机制，从而提高系统的可用性。
+                主要用到如下组件：
+                1、RetryerBuilder：重试构建器，用于构建 Retryer；
+                2、Retryer：重试器，用于执行重试；
+                3、RetryListener：重试监听器，用于监听重试事件；
+                4、StopStrategy：停止策略，用于判断是否停止重试；
+                5、WaitStrategy：等待策略，用于计算下次重试的等待时间。
+            -->
+            <dependency>
+                <groupId>com.github.rholder</groupId>
+                <artifactId>guava-retrying</artifactId>
+                <version>${guava.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>guava</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- Alibaba FastJson 依赖 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${alibaba.fastjson.version}</version>
+            </dependency>
+
+            <!-- ############################### Drools 相关依赖 ############################### -->
+
+            <!-- Drools 依赖 -->
+            <dependency>
+                <groupId>org.kie</groupId>
+                <artifactId>kie-api</artifactId>
+                <version>${drools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.drools</groupId>
+                <artifactId>drools-core</artifactId>
+                <version>${drools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.drools</groupId>
+                <artifactId>drools-compiler</artifactId>
+                <version>${drools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kie</groupId>
+                <artifactId>kie-spring</artifactId>
+                <version>${drools.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+
+        <!-- Hutool Java 工具包-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+
+        <!-- Spring Boot 的配置处理器 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Spring Boot AOP 提供面向切面编程的功能 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Actuator 提供监控和管理 HTTP 端点的功能 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Test 依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.assertj</groupId>
+                    <artifactId>assertj-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Lombak 依赖 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 解决 JDK 11 兼容性问题 -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Spring Boot Maven 插件 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- Maven 编译插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- Maven 资源插件：设置 resources 资源文件的编码，否则如果配置文件中有中文，部署到服务器上会出现乱码 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <delimiters>
+                        <delimiter>@</delimiter>
+                        <delimiter>${*}</delimiter>
+                    </delimiters>
+                </configuration>
+            </plugin>
+
+            <!-- Maven 打包插件：打包时同时生成源码包 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <configuration>
+                    <!--<encoding>UTF-8</encoding>-->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven 测试插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                    <argLine>Dfile.encoding=UTF-8</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <resources>
+            <!-- 配置文件资源过滤：如果有其他需要过滤的文件，可以在这里添加 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.yml</include>
+                    <include>**/*.groovy</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.ftl</include>
+                    <include>**/*.ktr</include>
+                    <include>**/*.xls</include>
+                    <include>banner.txt</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
+</project>

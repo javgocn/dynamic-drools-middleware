@@ -1,0 +1,98 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.javgo</groupId>
+        <artifactId>dynamic-drools-middleware</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>cn.javgo</groupId>
+    <artifactId>drools-run</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>drools-run</name>
+    <url>http://maven.apache.org</url>
+
+    <dependencies>
+
+        <!-- drools-common 模块 -->
+        <dependency>
+            <groupId>cn.javgo</groupId>
+            <artifactId>drools-common</artifactId>
+        </dependency>
+
+        <!-- drools-mbg 模块 -->
+        <dependency>
+            <groupId>cn.javgo</groupId>
+            <artifactId>drools-mbg</artifactId>
+        </dependency>
+
+        <!-- drools-security 模块 -->
+        <dependency>
+            <groupId>cn.javgo</groupId>
+            <artifactId>drools-security</artifactId>
+        </dependency>
+
+        <!-- Alibaba FastJson 依赖 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+
+        <!-- Drools 依赖 -->
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-compiler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-spring</artifactId>
+        </dependency>
+
+        <!-- HttpClient 依赖
+                这是 Apache HttpComponents 提供的一个工具包，提供了一些常用的工具类，例如：HttpClient、HttpEntity、
+                HttpResponse 等等。在项目中我们主要使用 Feign 来调用远程接口，但是 Apache HttpComponents 也是一个不错的选择。
+                在编写规则引擎回调下游业务服务重试策略时，我们使用了 Apache HttpComponents 的如下组件：
+                1、HttpClientBuilder：用于构建 HttpClient 对象。
+                2、CloseableHttpResponse：用于接收 HttpClient 调用远程接口的响应结果。
+                3、HttpRequestBase：用于构建 HttpClient 调用远程接口的请求参数。
+                4、EntityUtils：用于将 HttpClient 调用远程接口的响应结果转换为字符串。
+            -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+
+        <!-- Guava-retrying 依赖
+                这是 Google Guava 的一个扩展，提供了重试机制，我们在项目中的规则引擎回调下游业务服务时，经常会遇到网络超时、数据库连接超时
+                等问题。这时候我们可以使用 Guava-retrying 来实现重试机制，从而提高系统的可用性。
+                主要用到如下组件：
+                1、RetryerBuilder：重试构建器，用于构建 Retryer；
+                2、Retryer：重试器，用于执行重试；
+                3、RetryListener：重试监听器，用于监听重试事件；
+                4、StopStrategy：停止策略，用于判断是否停止重试；
+                5、WaitStrategy：等待策略，用于计算下次重试的等待时间。
+            -->
+        <dependency>
+            <groupId>com.github.rholder</groupId>
+            <artifactId>guava-retrying</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+    </dependencies>
+</project>
