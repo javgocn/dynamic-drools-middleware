@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://www.drools.org/xsd/kmodule">
+
+    <configuration>
+        <property key="drools.evaluator.supersetOf" value="org.mycompany.SupersetOfEvaluatorDefinition"/>
+    </configuration>
+
+    <!-- 配置 kiebase
+        name: kiebase 名称，必须唯一
+        default: 是否为默认 kiebase ，默认为 false
+        eventProcessingMode: 事件处理模式，可选值为 cloud 和 stream ，默认为 cloud
+            - cloud: 云模式，事件在规则引擎中被处理
+            - stream: 流模式，事件在规则引擎之外被处理
+        equalsBehavior: 等价行为，可选值为 identity 和 equality ，默认为 identity
+            - identity: 使用 == 比较对象
+            - equality: 使用 equals() 比较对象
+        declarativeAgenda: 声明性 agenda ，可选值为 enabled 和 disabled ，默认为 enabled
+        packages: kiebase 所在的包，多个包之间用逗号分隔，同一个 kiebase 下的 kiesession 可以访问同一个包下的规则
+        includes: 引入其他 kiebase ，多个 kiebase 之间用逗号分隔
+     -->
+    <kbase name="KBase1" default="true" eventProcessingMode="cloud" equalsBehavior="equality" declarativeAgenda="enabled" packages="org.domain.pkg1">
+
+        <!-- 配置 kiesession
+            name: kiesession 名称，必须唯一
+            type: kiesession 类型，可选值为 stateful 和 stateless ，默认为 stateful
+                - stateful: 有状态的 kiesession ，可以在多个规则之间共享数据
+                - stateless: 无状态的 kiesession ，每个规则都有自己的数据，规则之间不共享数据
+            default: 是否为默认 kiesession ，默认为 false
+            clockType: 时钟类型，可选值为 pseudo 和 realtime ，默认为 pseudo
+                - pseudo: 伪时钟，时间不会随着规则引擎的执行而改变
+                - realtime: 真实时钟，时间会随着规则引擎的执行而改变
+            beliefSystem: 信任系统，可选值为 simple 和 jtms ，默认为 simple
+                - simple: 简单信任系统，规则引擎会在每次执行规则之前清空所有的事实（Fact），包括事实的历史记录
+                - jtms: JTMS 信任系统，规则引擎会在每次执行规则之前清空所有的事实（Fact），但是会保留事实的历史记录
+        -->
+        <ksession name="KSession2_1" type="stateful" default="true"/>
+        <ksession name="KSession2_2" type="stateless" default="false" beliefSystem="jtms"/>
+    </kbase>
+
+    <kbase name="KBase2" default="false" eventProcessingMode="stream" equalsBehavior="equality" declarativeAgenda="enabled" packages="org.domain.pkg2, org.domain.pkg3" includes="KBase1">
+        <ksession name="KSession3_1" type="stateful" default="false" clockType="realtime">
+            <fileLogger file="drools.log" threaded="true" interval="10"/>
+            <workItemHandlers>
+                <workItemHandler name="name" type="org.domain.WorkItemHandler"/>
+            </workItemHandlers>
+            <calendars>
+                <calendar name="monday" type="org.domain.Monday"/>
+            </calendars>
+            <listeners>
+                <ruleRuntimeEventListener type="org.domain.RuleRuntimeListener"/>
+                <agendaEventListener type="org.domain.FirstAgendaListener"/>
+                <agendaEventListener type="org.domain.SecondAgendaListener"/>
+                <processEventListener type="org.domain.ProcessListener"/>
+            </listeners>
+        </ksession>
+    </kbase>
+</kmodule>

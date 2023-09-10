@@ -33,6 +33,7 @@
         <module>drools-security</module>
         <!-- 示例模块 -->
         <module>drools-demo</module>
+        <module>drools-demo</module>
     </modules>
 
     <properties>
