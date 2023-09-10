@@ -1,7 +1,6 @@
 package cn.javgo.drools.service;
 
 import cn.javgo.drools.model.BusScene;
-
 import java.util.List;
 
 /**
@@ -10,24 +9,16 @@ import java.util.List;
 public interface BusSceneService {
 
     /**
-     * 查询所有场景
-     * @return List<BusScene> 场景列表
+     * 查询所有业务场景
+     * @return 业务场景集合
      */
     List<BusScene> listAll();
 
     /**
-     * 根据ID查询场景
+     * 创建业务场景
      *
-     * @param id 场景ID
-     * @return BusScene 场景
+     * @param busScene 业务场景
+     * @return 创建结果
      */
-    BusScene getSceneById(final Long id);
-
-    /**
-     * 根据名称查询场景
-     *
-     * @param Name 场景名称
-     * @return BusScene 场景
-     */
-    BusScene getSceneByName(final String Name);
+    int create(BusScene busScene);
 }

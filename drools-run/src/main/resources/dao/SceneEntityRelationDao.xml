@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.javgo.drools.dao.SceneEntityRelationDao">
+
+    <select id="getMetaEntityByScene" resultType="cn.javgo.drools.model.MetaEntity">
+        -- DISTINCT 去重
+        SELECT DISTINCT
+            ME.id,              -- 实体id
+            ME.name,            -- 实体名称
+            ME.identify,        -- 实体标识
+            ME.attributes,      -- 实体属性
+            ME.desc,            -- 实体描述
+            ME.is_effect,       -- 是否有效
+            ME.cre_user_id,     -- 创建人id
+            ME.cre_time,        -- 创建时间
+            ME.upd_time,        -- 更新时间
+            ME.remark           -- 备注
+        FROM
+            -- 实体表
+            meta_entity ME
+        INNER JOIN
+            -- 场景实体关系表，通过实体表的id和场景实体关系表的entity_id关联
+            scene_entity_relation SER ON ME.id = SER.entity_id
+        INNER JOIN
+            -- 场景表，通过场景表的id和场景实体关系表的scene_id关联
+            bus_scene BS ON BS.id = SER.scene_id
+        WHERE
+            -- 防止 SQL 语法错误
+            1 = 1
+        AND
+            -- 实体表的is_effect字段为1，表示有效
+            ME.is_effect = 1
+        AND
+            -- 场景表的is_effect字段为1，表示有效
+            BS.is_effect = 1
+        -- 如果场景标识不为空，则通过场景标识查询
+        <if test="sceneIdentify != null">
+            AND BS.identify = #{busScene.identify}
+        </if>
+        -- 如果场景id不为空，则通过场景id查询
+        <if test="busScene.id != null">
+            AND BS.id = #{busScene.id}
+        </if>
+    </select>
+
+</mapper>

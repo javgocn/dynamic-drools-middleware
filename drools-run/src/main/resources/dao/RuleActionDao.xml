@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.javgo.drools.dao.RuleActionDao">
+
+    <select id="getRuleActionByBusScene" resultType="cn.javgo.drools.model.RuleAction">
+        -- DISTINCT 去重
+        SELECT DISTINCT
+            RA.id,                  -- 规则动作id
+            RA.name,                -- 规则动作名称
+            RA.type,                -- 规则动作类型
+            RA.callback_enable,     -- 回调是否启用
+            RA.callback_url,        -- 回调地址
+            RA.action_expression,   -- 规则动作表达式
+            RA.desc,                -- 规则动作描述
+            RA.is_effect,           -- 是否有效
+            RA.cre_user_id,         -- 创建人id
+            RA.cre_time,            -- 创建时间
+            RA.upd_time,            -- 更新时间
+            RA.remark               -- 备注
+        FROM
+            -- 规则动作表
+            rule_action RA
+        INNER JOIN
+            -- 规则表，通过规则表的id和规则动作表的rule_id关联
+            rule_info RI ON RA.rule_id = RI.id
+        INNER JOIN
+            -- 场景表，通过场景表的id和规则表的scene_id关联
+            bus_scene BS ON RI.scene_id = BS.id
+        WHERE
+            -- 防止 SQL 语法错误
+            1 = 1
+        AND BS.is_effect = 1    -- 只查询有效的场景
+        AND RI.is_effect = 1    -- 只查询有效的规则
+        AND RA.is_effect = 1    -- 只查询有效的规则动作
+        -- 动态 SQL：如果场景 ID 不为空，则添加条件，只查询指定场景的规则动作
+        <if test="busScene.id != null">
+            AND BS.id = #{busScene.id}
+        </if>
+        -- 动态 SQL：如果场景标识不为空，则添加条件，只查询指定场景的规则动作
+        <if test="busScene.identify != null">
+            AND BS.identify = #{busScene.identify}
+        </if>
+    </select>
+
+    <select id="getRuleActionByRuleId" resultType="cn.javgo.drools.model.RuleAction">
+        -- DISTINCT 去重
+        SELECT DISTINCT
+            RA.id,                  -- 规则动作id
+            RA.name,                -- 规则动作名称
+            RA.type,                -- 规则动作类型
+            RA.callback_enable,     -- 回调是否启用
+            RA.callback_url,        -- 回调地址
+            RA.action_expression,   -- 规则动作表达式
+            RA.desc,                -- 规则动作描述
+            RA.is_effect,           -- 是否有效
+            RA.cre_user_id,         -- 创建人id
+            RA.cre_time,            -- 创建时间
+            RA.upd_time,            -- 更新时间
+            RA.remark               -- 备注
+        FROM
+            -- 规则动作表
+            rule_action RA
+        INNER JOIN
+            -- 规则表，通过规则表的id和规则动作表的rule_id关联
+            rule_info RI ON RA.rule_id = RI.id
+        WHERE
+            -- 防止 SQL 语法错误
+            1 = 1
+        AND RI.is_effect = 1    -- 只查询有效的规则
+        AND RA.is_effect = 1    -- 只查询有效的规则动作
+        -- 动态 SQL：如果规则 ID 不为空，则添加条件，只查询指定规则的规则动作
+        <if test="ruleInfo.id != null">
+            AND RI.id = #{ruleId}
+        </if>
+    </select>
+</mapper>

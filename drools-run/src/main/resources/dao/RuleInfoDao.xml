@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.javgo.drools.dao.RuleInfoDao">
+
+    <select id="getRuleAttributeByRuleId" resultType="cn.javgo.drools.dto.RuleAttributeRelationDto">
+        -- DISTINCT 去重
+        SELECT DISTINCT
+            RAR.id,                 -- 规则属性关联表主键
+            RAR.rule_id,            -- 规则id
+            RAR.attribute_id,       -- 属性id
+            RAR.attribute_value,    -- 属性值
+            RA.identify,            -- 属性标识
+            RA.name,                -- 属性名称
+            RA.desc,                -- 属性描述
+            RA.default_value,       -- 属性默认值
+            RA.is_effect,           -- 是否有效
+            RA.remark               -- 备注
+        FROM
+            -- 规则属性表
+            rule_attribute RA
+        INNER JOIN
+            -- 通过规则属性id内连接规则属性关联表
+            rule_attribute_relational RAR ON RA.id = RAR.attribute_id
+        WHERE
+            -- 防止 SQL 语法错误
+            1 = 1
+        AND
+            -- 只查询有效的规则属性
+            RA.is_effect = 1
+        -- 动态 SQL：如果 ruleId 不为空，则添加条件，只查询指定规则的属性
+        <if test="ruleId != null">
+            AND RAR.rule_id = #{ruleId}
+        </if>
+    </select>
+
+    <select id="getRuleInfoByScene" resultType="cn.javgo.drools.model.RuleInfo">
+        -- DISTINCT 去重
+        SELECT DISTINCT
+            RI.id,              -- 规则id
+            RI.scene_id,        -- 场景id
+            RI.name,            -- 规则名称
+            RI.desc,            -- 规则描述
+            RI.is_effect,       -- 是否有效
+            RI.cre_user_id,     -- 创建人id
+            RI.cre_time,        -- 创建时间
+            RI.remark           -- 备注
+        FROM
+            -- 规则表
+            rule_info RI
+        INNER JOIN
+            -- 通过规则表中的场景id内连接场景表
+            bus_scene BS ON RI.scene_id = BS.id
+        WHERE
+            -- 防止 SQL 语法错误
+            1 = 1
+        AND BS.is_effect = 1    -- 只查询有效的场景
+        AND RI.is_effect = 1    -- 只查询有效的规则
+        -- 动态 SQL：如果场景 ID 不为空，则添加条件，只查询指定场景的规则
+        <if test="sceneId != null">
+            AND BS.id = #{busScene.id}
+        </if>
+        -- 动态 SQL：如果场景标识不为空，则添加条件，只查询指定场景的规则
+        <if test="sceneIdentify != null">
+            AND BS.identify = #{busScene.identify}
+        </if>
+    </select>
+
+</mapper>

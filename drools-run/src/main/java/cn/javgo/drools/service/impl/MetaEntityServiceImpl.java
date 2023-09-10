@@ -4,15 +4,16 @@ import cn.javgo.drools.exception.ServiceException;
 import cn.javgo.drools.exception.enums.ExceptionEnum;
 import cn.javgo.drools.mapper.MetaEntityMapper;
 import cn.javgo.drools.model.MetaEntity;
-import cn.javgo.drools.model.MetaEntityExample;
 import cn.javgo.drools.service.MetaEntityService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * 实体 Service 实现类
+ * 元数据实体 Service 实现
  */
+@Service
 public class MetaEntityServiceImpl implements MetaEntityService {
 
     @Resource
@@ -24,18 +25,16 @@ public class MetaEntityServiceImpl implements MetaEntityService {
     }
 
     @Override
-    public MetaEntity getMetaEntityById(Long id) {
-        // 如果id为空，抛出异常
-        if (id == null){
+    public MetaEntity getMetaEntityById(Long entityId) {
+        // 如果实体ID为空，抛出参数缺失异常
+        if (entityId == null) {
             throw new ServiceException(ExceptionEnum.SYS_REQUEST_PARAM_MISSING);
         }
-        return metaEntityMapper.selectByPrimaryKey(id);
+        return metaEntityMapper.selectByPrimaryKey(entityId);
     }
 
     @Override
-    public List<MetaEntity> getMetaEntityByIds(List<Long> ids) {
-        MetaEntityExample example = new MetaEntityExample();
-        example.createCriteria().andIdIn(ids);
-        return metaEntityMapper.selectByExample(example);
+    public int create(MetaEntity metaEntity) {
+        return metaEntityMapper.insertSelective(metaEntity);
     }
 }

@@ -1,5 +1,6 @@
 package cn.javgo.drools.service;
 
+import cn.javgo.drools.model.BusScene;
 import cn.javgo.drools.model.RuleAction;
 import java.util.List;
 
@@ -9,16 +10,35 @@ import java.util.List;
 public interface RuleActionService {
 
     /**
-     * 查询所有规则动作
-     * @return List<RuleAction> 规则动作列表
+     * 分页查询规则动作
+     *
+     * @param ruleAction 规则动作
+     * @param pageNum    当前页数
+     * @param pageSize   每页条数
+     * @return 规则动作列表
      */
-    List<RuleAction> listAll();
+    List<RuleAction> listPage(RuleAction ruleAction, int pageNum, int pageSize);
 
     /**
-     * 根据规则ID批量查询规则动作
-     *
-     * @param ruleIds 规则ID列表
-     * @return List<RuleAction> 规则动作列表
+     * 根据场景查询规则动作
+     * @param busScene 场景信息
+     * @return  规则动作列表
      */
-    List<RuleAction> getRuleActionByRuleIds(List<Long> ruleIds);
+    List<RuleAction> getRuleConditionByBusScene(BusScene busScene);
+
+    /**
+     * 根据规则id获取规则动作信息
+     *
+     * @param ruleId 规则id
+     * @return 规则动作信息
+     */
+    List<RuleAction> getRuleActionByRuleId(final Long ruleId);
+
+    /**
+     * 创建规则动作
+     *
+     * @param ruleAction 规则动作
+     * @return 创建结果
+     */
+    int create(RuleAction ruleAction);
 }

@@ -10,25 +10,28 @@ import java.util.List;
 public interface RuleConditionService {
 
     /**
-     * 查询所有规则条件
-     * @return List<RuleCondition> 规则条件列表
-     */
-    List<RuleCondition> listAll();
-
-    /**
      * 分页查询规则条件
      *
-     * @param pageNum 页码
-     * @param pageSize 每页数量
-     * @return List<RuleCondition> 规则条件列表
+     * @param ruleCondition 规则条件
+     * @param pageNum    当前页数
+     * @param pageSize   每页条数
+     * @return 规则条件列表
      */
-    List<RuleCondition> list(int pageNum, int pageSize);
+    List<RuleCondition> listPage(RuleCondition ruleCondition,int pageNum,int pageSize);
 
     /**
-     * 根据规则条件ID查询规则条件
+     * 根据规则id获取规则条件信息
      *
-     * @param id 规则条件ID
-     * @return RuleCondition 规则条件
+     * @param ruleId 规则id
+     * @return 规则条件信息
      */
-    RuleCondition getRuleConditionById(final Long id);
+    RuleCondition getRuleConditionById(final Long ruleId);
+
+    /**
+     * 创建规则条件
+     *
+     * @param ruleCondition 规则条件
+     * @return 创建结果
+     */
+    int create(RuleCondition ruleCondition);
 }

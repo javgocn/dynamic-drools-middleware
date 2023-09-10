@@ -60,7 +60,7 @@ public class DroolsUtil {
     }
 
     /**
-     * 根据特定场景的规则字符串重新编译规则，并将编译后的 KieBase 存入缓存
+     * 根据特定场景的规则字符串重新编译规则，并将编译后的 KieBase 存入缓存，返回 KieSession 对象。
      *
      * @param rule 规则字符串
      * @param scene 场景标识
@@ -74,17 +74,16 @@ public class DroolsUtil {
             // 为了防止规则文件名字重复，此处加上时间戳( 格式：场景标识 + 时间戳 + .drl)
             String ruleFileName = scene + System.currentTimeMillis() + ".drl";
 
-            // 获取 KieServices 对象（这是 KIE 模块提供的 API，用于获取其他对象）
+            // 从工厂中获取 KieServices 对象
             KieServices kieServices = KieServices.Factory.get();
 
-            // 获取 KieFileSystem 对象（用于加载规则文件）
+            // 获取 KieFileSystem 虚拟文件系统
             KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
+
             // 将规则文件存入 KieFileSystem 对象中
             // 这是一个重要的步骤，它允许你动态地加载和编译规则，而不需要预先在项目中有物理的 DRL 文件
             kieFileSystem.write(
-                    // 规则文件在 KIE 虚拟文件系统中的路径
-                    // 该路径模仿了 Maven 项目的结构，但实际上它是虚拟的，不代表实际的文件系统路径
-                    // ruleFileName 是动态生成的文件名，以确保每次都是唯一的
+                    // 规则文件在 KIE 虚拟文件系统中的路径，该路径模仿了 Maven 项目的结构，但实际上它是虚拟的，不代表实际的文件系统路径
                     "src/main/resources/drools/rules/" + ruleFileName,
                     // 将规则字符串转换为字节数组，这是 write 方法需要的格式
                     rule.getBytes(StandardCharsets.UTF_8));
@@ -97,17 +96,18 @@ public class DroolsUtil {
             if (!kieBuilder.getResults().getMessages(Message.Level.ERROR).isEmpty()){
                 // 记录错误日志
                 LOGGER.error("规则文件编译出错：{}",kieBuilder.getResults().getMessages());
-                // 抛出运行时异常
+                // 抛出 Drools 初始化规则失败异常（一般是 DRL 文件中语法错误）
                 throw new UtilsException(DroolsExceptionEnum.DROOLS_INIT_RULE_FAIL_ERROR);
             }
 
-            // 获取 KieContainer 对象（用于加载 KieBase 对象到缓存）
+            // 获取 KieContainer 对象（用于存储编译后的规则）
             KieContainer kieContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
 
-            // 获取 KieBase 对象（用于创建 KieSession 对象）
+            // 获取 KieBase 对象（用于存储规则）
             KieBase kieBase = kieContainer.getKieBase();
 
             // 将 KieBase 对象存入缓存
+            // Map<String,KieBase> ruleMap 在运行时缓存了所有的 KieBase 对象，这样就可以在多线程环境下使用了
             ruleMap.put(scene,kieBase);
 
             // 获取 KieSession 对象（用于执行规则）
@@ -121,7 +121,7 @@ public class DroolsUtil {
             // 返回 KieSession 对象
             return kieSession;
         }catch (Exception e){
-            // 记录错误日志
+            // 记录错误日志（一般是 DRL 文件中语法错误）
             LOGGER.error("规则引擎初始化规则失败，请查看错误信息:{}",e.getMessage());
             throw new UtilsException(DroolsExceptionEnum.DROOLS_INIT_RULE_FAIL_ERROR);
         }
@@ -210,14 +210,14 @@ public class DroolsUtil {
             // 获取 KieSession 对象（用于执行规则）
             return kieBase.newKieSession();
         }catch (Exception e){
-            // 记录错误日志
+            // 记录错误日志（Drools 初始化错误）
             LOGGER.error("获取 KieBase 信息错误:{}",e.getMessage());
             throw new UtilsException(DroolsExceptionEnum.DROOLS_UTIL_INIT_FAIL_ERROR);
         }
     }
 
     /**
-     * 根据规则字符串编译规则，并验证规则是否正确（用于规则测试，目前支持测试本地规则文件，不支持测试远程规则文件）
+     * 根据规则字符串编译规则，并验证规则是否正确（用于规则测试，不需要将 KieBase 存入缓存）
      *
      * @param rule 规则字符串
      * @return true：编译成功；false：编译失败
@@ -228,16 +228,16 @@ public class DroolsUtil {
 
         try {
 
-            // 获取 KieServices 对象（这是 KIE 模块提供的 API，用于获取其他对象）
+            // 获取 KieServices 对象
             KieServices kieServices = KieServices.Factory.get();
 
-            // 获取 KieFileSystem 对象（用于加载规则文件）
+            // 获取 KieFileSystem 虚拟文件系统对象
             KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
 
-            // 获取本地规则文件（即：本地编写的规则文件）
-            kieFileSystem.write("src/main/resources/drools/rules" + fileName,rule.getBytes(StandardCharsets.UTF_8));
+            // 将规则文件存入 KieFileSystem 对象中
+            kieFileSystem.write("src/main/resources/drools/rules/" + fileName,rule.getBytes(StandardCharsets.UTF_8));
 
-            // 获取 KieBuilder 对象（用于编译规则文件）
+            // 使用 KieBuilder 对象编译规则文件
             KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
 
             // 如果没有编译出错，则返回 true 表示编译成功，测试通过
@@ -245,7 +245,7 @@ public class DroolsUtil {
                 return Boolean.TRUE;
             }
         } catch (Exception e) {
-            // 记录错误日志
+            // 记录错误日志（Drools 初始化错误）
             LOGGER.error("获取 KieBase 信息错误:{}", e.getMessage());
             throw new UtilsException(DroolsExceptionEnum.DROOLS_UTIL_INIT_FAIL_ERROR);
         }
@@ -264,7 +264,7 @@ public class DroolsUtil {
     }
 
     /**
-     * 清空所有规则缓存
+     * 清空所有规则缓存，当规则文件发生变化时，需要调用此方法清空缓存以确保缓存中的规则是最新的
      */
     public static void clearRuleMap() {
         ruleMap.clear();
