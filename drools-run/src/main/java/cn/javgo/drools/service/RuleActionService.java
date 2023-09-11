@@ -24,7 +24,7 @@ public interface RuleActionService {
      * @param busScene 场景信息
      * @return  规则动作列表
      */
-    List<RuleAction> getRuleConditionByBusScene(BusScene busScene);
+    List<RuleAction> getRuleActionByBusScene(BusScene busScene);
 
     /**
      * 根据规则id获取规则动作信息
