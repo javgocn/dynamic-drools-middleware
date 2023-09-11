@@ -36,12 +36,26 @@ public class RuleConditionServiceImpl implements RuleConditionService {
     }
 
     @Override
-    public RuleCondition getRuleConditionById(Long ruleId) {
+    public List<RuleCondition> getRuleConditionById(Long ruleId) {
         // 如果规则ID为 null，抛出参数缺失异常
         if (ruleId == null) {
             throw new ServiceException(ExceptionEnum.SYS_REQUEST_PARAM_MISSING);
         }
-        return ruleConditionMapper.selectByPrimaryKey(ruleId);
+
+        RuleConditionExample example = new RuleConditionExample();
+        RuleConditionExample.Criteria criteria = example.createCriteria();
+        criteria.andRuleIdEqualTo(ruleId);
+
+        return ruleConditionMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<RuleCondition> getRuleConditionByParentId(Long parentId) {
+        RuleConditionExample example = new RuleConditionExample();
+        RuleConditionExample.Criteria criteria = example.createCriteria();
+        criteria.andParentIdEqualTo(parentId);
+
+        return ruleConditionMapper.selectByExample(example);
     }
 
     @Override
