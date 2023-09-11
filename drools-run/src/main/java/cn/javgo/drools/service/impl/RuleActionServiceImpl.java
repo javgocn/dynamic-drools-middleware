@@ -1,11 +1,15 @@
 package cn.javgo.drools.service.impl;
 
 import cn.hutool.db.Page;
+import cn.javgo.drools.dao.RuleActionDao;
+import cn.javgo.drools.exception.ServiceException;
+import cn.javgo.drools.exception.enums.ExceptionEnum;
 import cn.javgo.drools.mapper.RuleActionMapper;
 import cn.javgo.drools.model.BusScene;
 import cn.javgo.drools.model.RuleAction;
 import cn.javgo.drools.model.RuleActionExample;
 import cn.javgo.drools.service.RuleActionService;
+import cn.javgo.drools.util.StringUtil;
 import com.github.pagehelper.PageHelper;
 
 import javax.annotation.Resource;
@@ -18,6 +22,9 @@ public class RuleActionServiceImpl implements RuleActionService {
 
     @Resource
     private RuleActionMapper ruleActionMapper;
+
+    @Resource
+    private RuleActionDao ruleActionDao;
 
     @Override
     public List<RuleAction> listPage(RuleAction ruleAction, int pageNum, int pageSize) {
@@ -34,13 +41,21 @@ public class RuleActionServiceImpl implements RuleActionService {
     }
 
     @Override
-    public List<RuleAction> getRuleConditionByBusScene(BusScene busScene) {
-        return null;
+    public List<RuleAction> getRuleActionByBusScene(BusScene busScene) {
+        // 如果业务场景为 null 或 业务场景 ID 和场景标识为空，抛出参数缺失异常
+        if (busScene == null || (busScene.getId() == null && StringUtil.isNullOrNullValue(busScene.getIdentify()))){
+            throw new ServiceException(ExceptionEnum.SYS_REQUEST_PARAM_MISSING);
+        }
+        return ruleActionDao.getRuleActionByBusScene(busScene);
     }
 
     @Override
     public List<RuleAction> getRuleActionByRuleId(Long ruleId) {
-        return null;
+        // 如果规则 ID 为空，抛出参数缺失异常
+        if (ruleId == null) {
+            throw new ServiceException(ExceptionEnum.SYS_REQUEST_PARAM_MISSING);
+        }
+        return ruleActionDao.getRuleActionByRuleId(ruleId);
     }
 
     @Override
