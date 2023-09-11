@@ -23,9 +23,17 @@ public interface RuleConditionService {
      * 根据规则id获取规则条件信息
      *
      * @param ruleId 规则id
-     * @return 规则条件信息
+     * @return 规则条件信息列表
      */
-    RuleCondition getRuleConditionById(final Long ruleId);
+    List<RuleCondition> getRuleConditionById(final Long ruleId);
+
+    /**
+     * 根据父id获取子条件集合
+     *
+     * @param parentId 父id
+     * @return 子条件集合
+     */
+    List<RuleCondition> getRuleConditionByParentId(final Long parentId);
 
     /**
      * 创建规则条件
