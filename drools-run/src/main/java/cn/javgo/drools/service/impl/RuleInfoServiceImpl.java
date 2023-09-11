@@ -67,7 +67,7 @@ public class RuleInfoServiceImpl implements RuleInfoService {
     }
 
     @Override
-    public List<RuleInfo> getRuleInfoBySceneId(BusScene busScene) {
+    public List<RuleInfo> getRuleInfoByScene(BusScene busScene) {
         // 如果场景信息为 null 或者 场景标识和场景ID都为空，则抛出参数缺失异常
         if(busScene == null || (busScene.getId() == null || StringUtil.isNullOrNullValue(busScene.getIdentify()))){
             throw new ServiceException(ExceptionEnum.SYS_REQUEST_PARAM_MISSING);
