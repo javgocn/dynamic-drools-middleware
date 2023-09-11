@@ -39,7 +39,7 @@ public interface RuleInfoService {
      * @param busScene 场景信息
      * @return 规则信息列表
      */
-    List<RuleInfo> getRuleInfoBySceneId(BusScene busScene);
+    List<RuleInfo> getRuleInfoByScene(BusScene busScene);
 
     /**
      * 创建规则信息
