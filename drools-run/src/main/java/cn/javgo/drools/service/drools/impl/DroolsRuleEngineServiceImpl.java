@@ -51,7 +51,7 @@ public class DroolsRuleEngineServiceImpl implements DroolsRuleEngineService {
     /**
      * 值为字符串类型的 DRL 属性需要加上双引号
      */
-    private static final String[] arr = new String[]{"date-effective", "date-expires", "dialect", "activation-group", "agenda-group", "ruleflow-group"}
+    private static final String[] arr = new String[]{"date-effective", "date-expires", "dialect", "activation-group", "agenda-group", "ruleflow-group"};
 
     @Resource
     private BusSceneService busSceneService;
@@ -202,6 +202,13 @@ public class DroolsRuleEngineServiceImpl implements DroolsRuleEngineService {
             ruleTemp = getDroolsInfoByRule(ruleInfo);
             droolsRuleStr.append(ruleTemp);
         }
+
+        LOGGER.info(LINE_SEPARATOR,"===========================规则串================================",LINE_SEPARATOR);
+        LOGGER.info(LINE_SEPARATOR,droolsRuleStr,LINE_SEPARATOR);
+        LOGGER.info(LINE_SEPARATOR,"===========================规则串================================",LINE_SEPARATOR);
+
+        // 8.初始化 Drools 规则引擎(编译规则、执行规则)
+        return compileRuleAndExecuteRuleEngine(droolsRuleStr,ruleExecutionObject,scene);
     }
 
     /**
@@ -385,5 +392,45 @@ public class DroolsRuleEngineServiceImpl implements DroolsRuleEngineService {
 
         // 2.根据规则 ID 获取规则动作
         List<RuleAction> action = ruleActionService.getRuleActionByRuleId(ruleInfo.getId());
+
+        // 3.如果没有获取到规则动作，则默认执行空动作
+        if (CollectionUtil.collectionIsNull(action)){
+            ruleStr.append(LINE_SEPARATOR).append("end").append(LINE_SEPARATOR);
+        }else {
+            // 4.检查是否开启回调，如果开启则将回调 URL 加入全局变量
+            if (action.get(0).getCallbackEnable() == 1){
+                // 拼接 String callbackUrl = new RuleAction().getCallbackUrl();
+                ruleStr.append(LINE_SEPARATOR).append("String callbackUrl = $action.getCallbackUrl();").append(LINE_SEPARATOR);
+                // 拼接 _result.setResult("callbackUrl",callbackUrl);
+                ruleStr.append(LINE_SEPARATOR).append("_result.setResult(\"callbackUrl\",callbackUrl);").append(LINE_SEPARATOR);
+            }
+            // 5.拼接 _result.setResult("ruleName","test-1");
+            ruleStr.append(LINE_SEPARATOR).append("_result.setResult(\"ruleName\",\"").append(ruleInfo.getName()).append("\");").append(LINE_SEPARATOR);
+
+            // 6.拼接 _result.setResult("result",true);
+            ruleStr.append(LINE_SEPARATOR).append("_result.setResult(\"result\",true);").append(LINE_SEPARATOR);
+        }
+
+        // 6.拼接 end 关键字
+        ruleStr.append("end").append(LINE_SEPARATOR).append(LINE_SEPARATOR).append(LINE_SEPARATOR);
+    }
+
+    /**
+     * 编译规则并执行规则引擎
+     *
+     * @param droolRuleStr 规则字符串
+     * @param ruleExecutionObject 规则执行对象
+     * @param scene 场景
+     * @return 规则执行对象
+     */
+    private RuleExecutionObject compileRuleAndExecuteRuleEngine(StringBuilder droolRuleStr,RuleExecutionObject ruleExecutionObject,final String scene){
+        KieSession kieSession;
+        try {
+            // 编译规则脚本，返回 KieSession
+            kieSession = DroolsUtil.getInstance().getDrlSession(droolRuleStr.toString(), scene);
+        }catch (Exception e){
+            throw new ServiceException(DroolsExceptionEnum.DROOLS_INIT_RULE_FAIL_ERROR);
+        }
+        return executeRuleEngine(kieSession,ruleExecutionObject,scene);
     }
 }
