@@ -1,6 +1,5 @@
 package cn.javgo.drools.dto.fact;
 
-import com.alibaba.fastjson.JSON;
 import lombok.Data;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,25 +38,6 @@ public class RuleExecutionObject implements Serializable {
      */
     public void addFactObject(Object factObject) {
         this.factObjectList.add(factObject);
-    }
-
-    /**
-     * 添加 fact 对象
-     *
-     * @param entityJson JSON 字符串
-     */
-    public void addFactObject(String entityJson) {
-        // 反序列化 JSON 字符串为 Map
-        Map<String,Object> parsedData = JSON.parseObject(entityJson, Map.class);
-
-        // 创建动态实体
-        DynamicEntity dynamicEntity = new DynamicEntity();
-
-        // 将 Map 中的数据设置到动态实体中
-        dynamicEntity.setAttributeMap(parsedData);
-
-        // 将动态实体添加到 fact 集合中
-        this.factObjectList.add(dynamicEntity);
     }
 
     /**
