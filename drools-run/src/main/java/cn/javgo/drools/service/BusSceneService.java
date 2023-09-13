@@ -15,6 +15,14 @@ public interface BusSceneService {
     List<BusScene> listAll();
 
     /**
+     * 根据业务场景标识查询业务场景
+     *
+     * @param identify 业务场景标识
+     * @return 业务场景
+     */
+    BusScene getBusSceneByIdentify(String identify);
+
+    /**
      * 创建业务场景
      *
      * @param busScene 业务场景

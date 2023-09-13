@@ -11,6 +11,7 @@ import cn.javgo.drools.model.RuleActionExample;
 import cn.javgo.drools.service.RuleActionService;
 import cn.javgo.drools.util.StringUtil;
 import com.github.pagehelper.PageHelper;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
 /**
  * 规则动作 Service 实现
  */
+@Service
 public class RuleActionServiceImpl implements RuleActionService {
 
     @Resource

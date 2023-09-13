@@ -19,7 +19,7 @@ public class RuleExecutionObject implements Serializable {
     private List<Object> factObjectList = new ArrayList<>();
 
     /**
-     * 全局对象集合
+     * 全局对象集合(里面存储了 RuleExecutionRule 对象)
      */
     private Map<String, Object> globalMap = new HashMap<>();
 

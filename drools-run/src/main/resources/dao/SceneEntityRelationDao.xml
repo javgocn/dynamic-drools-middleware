@@ -9,7 +9,7 @@
             ME.name,            -- 实体名称
             ME.identify,        -- 实体标识
             ME.attributes,      -- 实体属性
-            ME.desc,            -- 实体描述
+            ME.description,     -- 实体描述
             ME.is_effect,       -- 是否有效
             ME.cre_user_id,     -- 创建人id
             ME.cre_time,        -- 创建时间

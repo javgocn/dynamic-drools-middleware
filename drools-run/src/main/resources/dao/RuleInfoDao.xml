@@ -11,7 +11,7 @@
             RAR.attribute_value,    -- 属性值
             RA.identify,            -- 属性标识
             RA.name,                -- 属性名称
-            RA.desc,                -- 属性描述
+            RA.description,         -- 属性描述
             RA.default_value,       -- 属性默认值
             RA.is_effect,           -- 是否有效
             RA.remark               -- 备注
@@ -20,7 +20,7 @@
             rule_attribute RA
         INNER JOIN
             -- 通过规则属性id内连接规则属性关联表
-            rule_attribute_relational RAR ON RA.id = RAR.attribute_id
+            rule_attribute_relation RAR ON RA.id = RAR.attribute_id
         WHERE
             -- 防止 SQL 语法错误
             1 = 1
@@ -39,7 +39,7 @@
             RI.id,              -- 规则id
             RI.scene_id,        -- 场景id
             RI.name,            -- 规则名称
-            RI.desc,            -- 规则描述
+            RI.description,     -- 规则描述
             RI.is_effect,       -- 是否有效
             RI.cre_user_id,     -- 创建人id
             RI.cre_time,        -- 创建时间
@@ -56,12 +56,12 @@
         AND BS.is_effect = 1    -- 只查询有效的场景
         AND RI.is_effect = 1    -- 只查询有效的规则
         -- 动态 SQL：如果场景 ID 不为空，则添加条件，只查询指定场景的规则
-        <if test="sceneId != null">
-            AND BS.id = #{busScene.id}
+        <if test="id != null">
+            AND BS.id = #{id}
         </if>
         -- 动态 SQL：如果场景标识不为空，则添加条件，只查询指定场景的规则
-        <if test="sceneIdentify != null">
-            AND BS.identify = #{busScene.identify}
+        <if test="identify != null">
+            AND BS.identify = #{identify}
         </if>
     </select>
 

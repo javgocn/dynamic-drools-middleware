@@ -9,7 +9,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
-
 import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -23,10 +22,19 @@ import java.util.function.Supplier;
 @Component
 public class RedisLock {
 
+    /**
+     * Redis 操作模板
+     */
     private final StringRedisTemplate redisTemplate;
 
+    /**
+     * Spring 异步任务执行线程池
+     */
     private final NativeAsyncTaskExecutePool threadExecutePool;
 
+    /**
+     * 构造器注入
+     */
     @Autowired
     public RedisLock(StringRedisTemplate redisTemplate, NativeAsyncTaskExecutePool threadExecutePool) {
         this.redisTemplate = redisTemplate;
@@ -39,19 +47,24 @@ public class RedisLock {
     private static final String REDIS_LOCK_PREFIX = "redis_lock_";
 
     /**
-     * 有任务正在执行时，再次请求锁时默认抛出该异常
+     * Redis 分布式锁默认异常：当获取锁失败时，抛出此异常 “存在进行中的任务，请稍后再试”
      */
     private static final Supplier<UtilsException> DEFAULT_LOCK_FAIL_THAN_THROWS = ()
             -> new UtilsException(ExceptionEnum.SYS_REDIS_LOCK_RUNNING_ERROR);
 
     /**
-     * 释放锁 lua 脚本
+     * 释放分布式锁的 Lua 脚本（原子操作）
+     * if redis.call('get', KEYS[1]) == ARGV[1] then // 获取分布式锁的 key 对应的 value，判断是否与传入的 value 相等（比较锁的唯一标识）
+     *      return redis.call('del', KEYS[1])   // 相等则删除锁，返回 1
+     * else <br/>
+     *      return 0    // 不相等则返回 0
+     * end
      */
     private static final String RELEASE_LOCK_LUA_SCRIPT = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis"
             + ".call('del', KEYS[1]) else return 0 end";
 
     /**
-     * 加锁
+     * 加分布式锁
      *
      * @param key      redis 中 key
      * @param value    key 对应的 value
@@ -60,24 +73,44 @@ public class RedisLock {
      * @return true加锁成功 false加锁失败
      */
     private boolean lock(String key, String value, TimeUnit timeUnit, long timeout) {
+        // SETNX key value：只有在 key 不存在时设置 key 的值为 value，若 key 已经存在，则不做任何操作
         Boolean result = redisTemplate.opsForValue().setIfAbsent(generateKey(key), value, timeout, timeUnit);
+
+        // 若 key 不存在，则设置成功，加锁成功
         if (result != null) {
             return result;
         }
+
+        // 若 key 已经存在，则不做任何操作，加锁失败
         return false;
     }
 
     /**
-     * 解锁：只有指定的 key 存在，且 value 与传入的 value 相等时才会解锁
+     * 释放锁
      *
      * @param key  redis 中 key
      * @param value key 对应的 value
      * @return true解锁成功 false解锁失败
      */
     private boolean unLock(String key, String value) {
+        // 使用 Lua 脚本保证原子性
         RedisScript<Long> redisScript = new DefaultRedisScript<>(RELEASE_LOCK_LUA_SCRIPT, Long.class);
+
+        // 执行 Lua 脚本，释放锁（返回 1 表示释放锁成功，返回 0 表示释放锁失败）
         Long result = redisTemplate.execute(redisScript, Collections.singletonList(generateKey(key)), value);
+
+        // 返回释放锁结果
         return (result != null && result == 1);
+    }
+
+    /**
+     * 组合 Redis 分布式锁的 key
+     *
+     * @param key redis 中 key
+     * @return 组合后的 key
+     */
+    private static String generateKey(String key) {
+        return REDIS_LOCK_PREFIX + key;
     }
 
     /**
@@ -96,16 +129,6 @@ public class RedisLock {
     }
 
     /**
-     * 组合 key
-     *
-     * @param key redis 中 key
-     * @return 组合后的 key
-     */
-    private static String generateKey(String key) {
-        return REDIS_LOCK_PREFIX + key;
-    }
-
-    /**
      * 在锁内执行任务（同步调用）
      *
      * @param key                   redis 中 key
@@ -119,18 +142,25 @@ public class RedisLock {
      */
     private <T> T doRunWithLockSync(String key, String value, TimeUnit timeUnit, long timeout, Callable<T> callable,
                                     Supplier<UtilsException> lockFailThanThrows) {
+        // 默认没有加锁
         boolean lock = false;
+
         try {
+            // 尝试加锁
             lock = lock(key, value, timeUnit, timeout);
-            // 加锁失败
+
+            // 如果加锁失败，则抛出异常
             if (!lock) {
                 throw lockFailThanThrows.get();
             }
+
+            // 加锁成功，则执行任务
             return callable.call();
         } catch (Exception e) {
             log.error("加锁运行失败", e);
             throw new UtilsException(ExceptionEnum.SYS_FAILURE_EXCEPTION);
         } finally {
+            // 如果加锁成功，则释放锁
             if (lock) {
                 this.unLock(key, value);
             }
@@ -165,7 +195,7 @@ public class RedisLock {
     private void doRunWithLockAsync(String key, String value, TimeUnit timeUnit, long timeout, Callable<?> callable,
                                     Supplier<UtilsException> lockFailThanThrows) {
         try {
-            // 加锁
+            // 尝试加锁，如果加锁失败，则抛出异常
             if (!lock(key, value, timeUnit, timeout)) {
                 throw lockFailThanThrows.get();
             }
@@ -173,14 +203,16 @@ public class RedisLock {
             log.error("加锁运行失败", e);
             throw new UtilsException(ExceptionEnum.SYS_FAILURE_EXCEPTION);
         }
-        // 提交线程异步执行
+
+        // 提交线程异步执行：从线程池中获取线程执行器，执行任务
         Objects.requireNonNull(threadExecutePool.getAsyncExecutor()).execute(() -> {
             try {
+                // 执行任务
                 callable.call();
             } catch (Exception e) {
                 log.error("加锁执行任务出错", e);
             } finally {
-                // 异步执行完才能解锁
+                // 异步执行完毕，释放锁
                 unLock(key, value);
             }
         });

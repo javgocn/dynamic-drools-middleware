@@ -11,7 +11,7 @@
             RA.callback_enable,     -- 回调是否启用
             RA.callback_url,        -- 回调地址
             RA.action_expression,   -- 规则动作表达式
-            RA.desc,                -- 规则动作描述
+            RA.description,         -- 规则动作描述
             RA.is_effect,           -- 是否有效
             RA.cre_user_id,         -- 创建人id
             RA.cre_time,            -- 创建时间
@@ -51,7 +51,7 @@
             RA.callback_enable,     -- 回调是否启用
             RA.callback_url,        -- 回调地址
             RA.action_expression,   -- 规则动作表达式
-            RA.desc,                -- 规则动作描述
+            RA.description,         -- 规则动作描述
             RA.is_effect,           -- 是否有效
             RA.cre_user_id,         -- 创建人id
             RA.cre_time,            -- 创建时间

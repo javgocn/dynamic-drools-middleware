@@ -177,21 +177,21 @@ public class DroolsRuleEngineServiceImpl implements DroolsRuleEngineService {
 
         // 3.导入业务场景对应的实体
         droolsRuleStr.append(IMPORT).append(" ").append("cn.javgo.drools.model.MetaEntity").append(";").append(LINE_SEPARATOR);
+        droolsRuleStr.append(IMPORT).append(" ").append("cn.javgo.drools.dto.fact.DynamicEntity").append(";").append(LINE_SEPARATOR);
 
         // 4.导入基本数据类型（主要用到 String、Map、List）
         droolsRuleStr.append(IMPORT).append(" ").append("java.lang.*").append(";").append(LINE_SEPARATOR);
         droolsRuleStr.append(IMPORT).append(" ").append("java.util.*").append(";").append(LINE_SEPARATOR);
 
         // 5.导入规则动作
-        droolsRuleStr.append(IMPORT).append(" ").append("cn.javgo.drools.model.RuleAction").append(";").append(LINE_SEPARATOR);
+        droolsRuleStr.append(IMPORT).append(" ").append("cn.javgo.drools.model.RuleAction").append(";").append(LINE_SEPARATOR).append(LINE_SEPARATOR);
 
         // 6.拼接 global 语句
         droolsRuleStr.append(GLOBAL).append(" ").append("RuleExecutionResult").append(" ").append("_result").append(";").append(LINE_SEPARATOR);
 
         // 7.拼接每个规则的 Drools 语句
         // 7.1 通过场景获取规则对象
-        BusScene busScene = new BusScene();
-        busScene.setIdentify(scene);
+        BusScene busScene = busSceneService.getBusSceneByIdentify(scene);
         List<RuleInfo> ruleInfoList = ruleInfoService.getRuleInfoByScene(busScene);
 
         LOGGER.info("{} 场景下共有 {} 条规则",scene,ruleInfoList.size());

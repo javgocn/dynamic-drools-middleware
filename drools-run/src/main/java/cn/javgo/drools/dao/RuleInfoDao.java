@@ -3,12 +3,14 @@ package cn.javgo.drools.dao;
 import cn.javgo.drools.dto.RuleAttributeRelationDto;
 import cn.javgo.drools.model.BusScene;
 import cn.javgo.drools.model.RuleInfo;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
  * 规则信息 Dao
  */
+@Mapper
 public interface RuleInfoDao {
 
     /**

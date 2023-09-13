@@ -1,5 +1,6 @@
 package cn.javgo.drools.service;
 
+import cn.javgo.drools.dto.fact.DynamicEntity;
 import cn.javgo.drools.model.MetaEntity;
 
 import java.util.List;
