@@ -17,10 +17,16 @@
     <url>http://maven.apache.org</url>
 
     <dependencies>
-        <!-- 封装统一分页结果 -->
+        <!-- PageHelper 分页插件 -->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper</artifactId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Data JPA -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
         <!-- 处理 Springfox 与高本本 Spring Boot 版本不兼容的问题时需要用到 -->
